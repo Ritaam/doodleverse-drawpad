@@ -1,12 +1,19 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, forwardRef } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useCanvas } from "@/hooks/useCanvas";
 
-export const Canvas: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+interface CanvasProps {
+  canvasRef?: React.RefObject<HTMLCanvasElement>;
+}
+
+export const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(({ canvasRef: externalCanvasRef }, ref) => {
+  const internalCanvasRef = useRef<HTMLCanvasElement>(null);
+  // Use external ref if provided, otherwise use internal ref
+  const canvasRef = externalCanvasRef || internalCanvasRef;
+  
   const {
     activeTool,
     setActiveTool,
@@ -31,7 +38,7 @@ export const Canvas: React.FC = () => {
 
   return (
     <>
-      <div className="canvas-container animate-fade-in">
+      <div className="canvas-container animate-fade-in h-full">
         <canvas
           ref={canvasRef}
           className="w-full h-full touch-none cursor-crosshair"
@@ -62,4 +69,6 @@ export const Canvas: React.FC = () => {
       </Dialog>
     </>
   );
-};
+});
+
+Canvas.displayName = 'Canvas';
